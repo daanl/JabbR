@@ -1,21 +1,46 @@
-﻿<h2 class="userlist-header nav-header">{{title}}</h2>
-<ul data-empty-message="@LanguageResources.Client_NoMatchingRooms">
-    <li data-ng-repeat="room in rooms | filter:{Private: isPrivate} | filter:roomSearchText | limitTo: itemsLimit()" data-ng-hide="!showClosedRooms && room.Closed" class="room" data-ng-class="{room.Private: locked, room.Closed: closed}"  data-ng-click="joinRoom($event, room)">
+﻿<h2 class="userlist-header nav-header">
+    <span ng-if="isPrivate">
+        {{$root.t('Client_Rooms')}}
+    </span>
+    <span ng-if="!isPrivate">
+        {{$root.t('Client_OtherRooms')}}
+    </span>
+</h2>
+<ul>
+    <li ng-if="rooms.length == 0">
+        {{$root.t('Client_NoMatchingRooms')}}
+    </li>
+
+    <li ng-repeat="room in rooms"
+        class="room"
+        ng-class="{ room.Private: locked, room.Closed: closed }"
+        ng-click="joinRoom($event, room)"
+    >
         <div class="row-fluid room-row">
             <div class="span3">
                 <span class="name">{{room.Name}}</span>
-                <span class="lock" data-ng-show="room.Private"><i class="icon-lock"></i></span>
-                <span class="readonly" data-ng-show="room.Closed"><i class="icon-ban-circle"></i></span>
+                <span class="lock" ng-show="room.Private"><i class="icon-lock"></i></span>
+                <span class="readonly" ng-show="room.Closed"><i class="icon-ban-circle"></i></span>
             </div>
             <div class="span4">
-                <span class="topic" data-ng-bind-html="room.Topic"></span>
+                <span class="topic" ng-bind-html="room.Topic"></span>
             </div>
             <div class="span2">
-                <span class="count">{{room.getUserCount()}}</span>
+                <span class="count">
+                    <span ng-if="room.Count == 0">
+                        {{$root.t('Client_OccupantsZero')}}
+                    </span>
+                    <<span ng-if="room.Count == 1">
+                         {{$root.t('Client_OccupantsOne')}}
+                     </span>
+                    <<span ng-if="room.Count > 1">
+                        {{room.Count}} {{$root.t('Client_OccupantsMany')}}
+                     </span>
+                </span>
             </div>
         </div>
     </li>
 </ul>
-<div id="load-more-rooms-item" class="room" data-ng-show="hasMoreItems()" data-ng-click="showMoreItems()">
-    <div class="row-fluid room-row load-more-rooms"><i class="icon-spinner" style="display: none;"></i>{{loadMoreTitle}}</div>
+<div id="load-more-rooms-item" class="room" ng-show="hasMoreItems()" ng-click="showMoreItems()">
+    <div class="row-fluid room-row load-more-rooms"><i class="icon-spinner" style="display: none;"></i>{{$root.t('Client_LoadMore')}}</div>
 </div>
